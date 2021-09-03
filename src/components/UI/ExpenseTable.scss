@@ -1,0 +1,30 @@
+.expenses-list {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 5px;
+
+  th,td {
+    padding: 5px;
+    text-align: left;
+    font-size: 20px;
+  }
+
+  th {
+    background-color: #649f70;
+    color: white;
+    font-weight: 500px;
+  }
+
+  tr {
+    font-weight: 300;
+    &:nth-child(odd) {
+      background-color: #fff;
+    }
+    &:nth-child(even) {
+      background-color: #eee4e4;
+    }
+    &:hover {
+      background-color: #94c898;
+    }
+  }
+}

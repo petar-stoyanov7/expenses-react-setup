@@ -1,0 +1,31 @@
+.header-button {
+  max-width: 30%;
+  height: 100%;
+  width: auto;
+  cursor: pointer;
+  position: relative;
+  margin-right: 15px;
+
+  &.smaller-icon {
+    height: 50%;
+    margin: auto 0;
+  }
+
+  &__image {
+    max-height: 100%;
+    width: auto;
+    filter: brightness(1) invert(0.9);
+  }
+
+  &__description {
+    display: none;
+  }
+
+  &:hover &__image {
+    filter: brightness(0) invert(1);
+  }
+
+  &:last-of-type {
+    margin-right: 0;
+  }
+}
