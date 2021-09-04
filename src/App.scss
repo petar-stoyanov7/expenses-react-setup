@@ -1,9 +1,9 @@
-@import "Variables";
+@import "Main";
 
 .main-content {
   margin: 90px auto 0 auto;
   max-width: none;
-  background-color: #e2eee3;
+  background-color: $background-color;
   padding: 20px 5px;
   min-height: 90vh;
 

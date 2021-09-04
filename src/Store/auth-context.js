@@ -9,6 +9,7 @@ import axios from "axios";
 const AuthContext = createContext({
     isLoggedIn: false,
     userId: null,
+    user: {},
     isAdmin: false,
     ajaxConfig: {},
     showLogin: () => {},
@@ -27,16 +28,15 @@ export const AuthContextProvider = (props) => {
         user: {}
     })
 
+
     const [cookies, setCookie, removeCookie] = useCookies(['user']);
 
     useEffect(() => {
-        const storedUserId = cookies.expUserId;
-        const storedLoggedIn = cookies.expIsLoggedIn === '1' || cookies.expIsLoggedIn === 1;
-        const storedIsAdmin = cookies.expIsAdmin === '1' || cookies.expIsAdmin === 1;
-        // console.log(storedUserId, storedLoggedIn);
-        if (Boolean(storedUserId) && Boolean(storedLoggedIn)) {
-            console.log('inside');
-            //TODO get user from ajax
+        const storedUserId = parseInt(cookies.expUserId);
+        const storedLoggedIn = parseInt(cookies.expIsLoggedIn) === 1;
+        const storedIsAdmin = parseInt(cookies.expIsAdmin) === 1;
+
+        if (Boolean(storedUserId) && storedLoggedIn) {
             const path = ajaxConfig.server + ajaxConfig.getUser;
             axios.post(path, {
                 id: storedUserId,
@@ -44,7 +44,6 @@ export const AuthContextProvider = (props) => {
             }).then((response) => {
                 console.log(response);
                 const data = response.data;
-                console.log('data', data);
                 if (data.success) {
                     console.log('success');
                     const user = {
@@ -59,8 +58,8 @@ export const AuthContextProvider = (props) => {
                     }
 
                     setUserDetails({
-                        isLogged: Boolean(storedLoggedIn),
-                        isAdmin: Boolean(storedIsAdmin),
+                        isLogged: storedLoggedIn,
+                        isAdmin: storedIsAdmin,
                         user: user,
                     });
                     hideLoginForm();
@@ -70,10 +69,14 @@ export const AuthContextProvider = (props) => {
     }, [isLogged]);
 
     const showLoginForm = () => {
-        setShowLogin(true);
+        if (!userDetails.isLogged) {
+            setShowLogin(true);
+        }
     }
     const showRegisterForm = () => {
-        setShowRegister(true);
+        if (!userDetails.isLogged) {
+            setShowRegister(true);
+        }
     }
 
     const hideLoginForm = () => {
@@ -132,6 +135,7 @@ export const AuthContextProvider = (props) => {
             value={{
                 isLoggedIn: userDetails.isLogged,
                 userId: userDetails.userId,
+                user: userDetails.user,
                 isAdmin: userDetails.isAdmin,
                 ajaxConfig: ajaxConfig,
                 showLogin: showLoginForm,

@@ -21,6 +21,7 @@ const Login = (props) => {
     });
     const [form, setForm] = useState({
         isValid: false,
+        isEmail: false,
         message: '',
     });
 
@@ -30,6 +31,7 @@ const Login = (props) => {
         if (user.value.length > 0 && pass.value.length > 0) {
             const timer = setTimeout(() => {
                 setForm({
+                    ...form,
                     isValid: user.isValid && pass.isValid,
                     message: 'Invalid username or password'
                 })
@@ -39,7 +41,7 @@ const Login = (props) => {
                 clearTimeout(timer);
             }
         }
-    }, [user.value, pass.value])
+    }, [user, pass, form]);
 
     const BlackOverlay = (props) => {
         return <div className="site-overlay black-overlay-1" onClick={props.onClose}></div>;
@@ -52,14 +54,30 @@ const Login = (props) => {
         let isValid = true;
         switch(inputName) {
             case 'username':
-                console.log('usr');
                 if (val.length < 4) {
                     isValid = false;
                     message = 'Username is too short';
                 }
-                if (null === val.match(/^[A-Za-z0-9]+$/g)) {
-                    isValid = false;
-                    message = 'Invalid characters';
+                if (val.includes('@')) {
+                    if (null === val.toLowerCase().match(/^[a-z0-9-_.]{3,}@[a-z0-9-_.]{3,}.[a-z-_.]{2,}$/g)) {
+                        isValid = false;
+                        message = 'Invalid e-mail address';
+                    } else {
+                        setForm({
+                            ...form,
+                            isEmail: true
+                        })
+                    }
+                } else {
+                    if (null === val.match(/^[A-Za-z0-9.-_]+$/g)) {
+                        isValid = false;
+                        message = 'Invalid characters';
+                    } else {
+                        setForm({
+                            ...form,
+                            isEmail: false
+                        })
+                    }
                 }
                 setUser({
                     value: val,
@@ -94,10 +112,12 @@ const Login = (props) => {
             axios.post(path, {
                 user: user.value,
                 pass: pass.value,
+                isEmail: + form.isEmail,
                 hash: ctx.ajaxConfig.hash
             }).then((response) => {
                 const data = response.data;
                 if (data.success) {
+                    console.log('login res', data);
                     const isAdmin = data.user.Group === 'admins';
                     const user = {
                         id: data.user.ID,
@@ -116,6 +136,9 @@ const Login = (props) => {
                     switch(data.status) {
                         case 1:
                             message = 'Invalid username or password';
+                            if (form.isEmail) {
+                                message = 'Invalid e-mail or password:';
+                            }
                             setUser({...user, isValid: false});
                             setPass({...pass, isValid: false});
                             break;
@@ -125,12 +148,14 @@ const Login = (props) => {
                             break;
                     }
                     setForm({
+                        ...form,
                         isValid: false,
                         message: message
                     });
                     console.log(data);
                 } else {
                     setForm({
+                        ...form,
                         isValid: false,
                         message: 'No connection to DB. Please check later!'
                     });
@@ -148,7 +173,7 @@ const Login = (props) => {
             )}
             <Card customClass="login-form">
                 <button className="login-form__close" onClick={props.onClose}>
-                    <img src={iconClose} className="login-form__close-icon" />
+                    <img src={iconClose} className="login-form__close-icon" alt="close button"/>
                 </button>
                 <form className="login-form__form" onSubmit={onSubmit}>
                     <h1 className="login-form__title">Login</h1>
@@ -163,10 +188,12 @@ const Login = (props) => {
                         </div>
                     )}
                     <input
+                        type='text'
                         className={user.isValid ? '' : 'input-error'}
                         name='username'
                         value={user.value}
                         onChange={handleInput}
+                        placeholder='Username or e-mail'
                     />
                     {!pass.isValid && (
                         <div className="login-form__error">
@@ -174,10 +201,12 @@ const Login = (props) => {
                         </div>
                     )}
                     <input
+                        type='password'
                         className={pass.isValid ? '' : 'input-error'}
                         name='password'
                         value={pass.value}
                         onChange={handleInput}
+                        placeholder='Password'
                     />
                     <input
                         className={
@@ -190,6 +219,14 @@ const Login = (props) => {
                         type="submit"
                         value="Login"
                     />
+                    <button
+                        type='button'
+                        className="login-form__button-cancel"
+                        value="Cancel"
+                        onClick={props.onClose}
+                    >
+                        Cancel
+                    </button>
                 </form>
             </Card>
         </React.Fragment>

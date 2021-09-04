@@ -1,4 +1,4 @@
-@import '../../Variables';
+@import '../../Main';
 
 .top-bar {
   position: fixed;
@@ -11,7 +11,7 @@
   max-height: 100px;
   padding: 5px;
   background: $main-color;
-  box-shadow: 2px 2px 4px #005903;
+  box-shadow: 2px 2px 8px $main-darker;
   z-index: $highest-z-index;
 
   @media (min-width: $medium) {

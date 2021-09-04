@@ -53,20 +53,22 @@ const Header = (props) => {
                         />
                     </React.Fragment>
                 )}
-                {ctx.isAdmin && (
-                    <HeaderButton
-                        text='Admin Panel'
-                        imageUrl={iconAdmin}
-                        imageAlt='Admin Panel'
-                        onClick=''
-                    />
-                )}
+                <div className="test">
+                    {ctx.isAdmin === 1 && (
+                        <HeaderButton
+                            text='Admin Panel'
+                            imageUrl={iconAdmin}
+                            imageAlt='Admin Panel'
+                            onClick=''
+                        />
+                    )}
+                </div>
             </div>
             <div className="login">
                 {!ctx.isLoggedIn && (
                     <React.Fragment>
                         <HeaderButton
-                            customClass='smaller-icon'
+                            customClass='smaller-icon teal-icon'
                             text='Login'
                             imageUrl={iconLogin}
                             imageAlt='Login'
@@ -83,7 +85,7 @@ const Header = (props) => {
                 )}
                 {ctx.isLoggedIn && (
                     <HeaderButton
-                        customClass='smaller-icon'
+                        customClass='smaller-icon orange-icon'
                         text='Logout'
                         imageUrl={iconLogout}
                         imageAlt='Logout'
