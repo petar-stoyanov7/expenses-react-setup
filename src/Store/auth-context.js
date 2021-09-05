@@ -65,7 +65,7 @@ export const AuthContextProvider = (props) => {
                 }
             });
         }
-    }, [userDetails]);
+    }, []);
 
     const showLoginForm = () => {
         if (!userDetails.isLogged) {
