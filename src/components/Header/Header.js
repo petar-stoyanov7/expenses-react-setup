@@ -16,8 +16,6 @@ import iconLogout from "../../assets/icons/icon-logout.svg";
 const Header = (props) => {
     const ctx = useContext(AuthContext);
 
-    console.log('header', ctx);
-
     return (
         <header className={`top-bar${ctx.isLoggedIn ? ' is-logged' : '' }`}>
             <div className="site-logo">

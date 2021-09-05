@@ -19,7 +19,6 @@ const AuthContext = createContext({
 });
 
 export const AuthContextProvider = (props) => {
-    const [isLogged, setIsLogged] = useState(false);
     const [showLogin, setShowLogin] = useState(false);
     const [showRegister, setShowRegister] = useState(false);
     const [userDetails, setUserDetails] = useState({
@@ -66,7 +65,7 @@ export const AuthContextProvider = (props) => {
                 }
             });
         }
-    }, [isLogged]);
+    }, [userDetails]);
 
     const showLoginForm = () => {
         if (!userDetails.isLogged) {
@@ -91,23 +90,15 @@ export const AuthContextProvider = (props) => {
         console.log('logout handler');
         setUserDetails({
             isLogged: false,
-            userId: null,
-            isAdmin: false
+            isAdmin: false,
+            user: {}
         });
         removeCookie('expUserId');
         removeCookie('expIsLoggedIn');
         removeCookie('expIsAdmin');
-        //removeCookie
     };
 
     const loginHandler = (user, isAdmin) => {
-        setIsLogged(true);
-        if (null === isAdmin) {
-            isAdmin = 0;
-        } else {
-            isAdmin = isAdmin ? 1 : 0;
-        }
-
         setUserDetails({
             isLogged: true,
             isAdmin: false,

@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {isValidElement, useContext, useEffect, useState} from 'react';
 import Card from "../UI/Card";
 import ReactDOM from "react-dom";
 import AuthContext from "../../Store/auth-context";
@@ -28,72 +28,96 @@ const Login = (props) => {
     const ctx = useContext(AuthContext);
 
     useEffect(() => {
-        if (user.value.length > 0 && pass.value.length > 0) {
+        if (user.value.length > 0 || pass.value.length > 0) {
             const timer = setTimeout(() => {
-                setForm({
-                    ...form,
-                    isValid: user.isValid && pass.isValid,
-                    message: 'Invalid username or password'
-                })
-            }, 500);
+                const userIsValid = _checkUserValidity();
+                const passIsValid = _checkPassValidity();
+                if (userIsValid && passIsValid) {
+                    setForm({
+                        ...form,
+                        isValid: user.isValid && pass.isValid,
+                        message: ''
+                    })
+                }
+            }, 300);
 
             return () => {
                 clearTimeout(timer);
             }
         }
-    }, [user, pass, form]);
+    }, [user.value, pass.value]);
 
     const BlackOverlay = (props) => {
         return <div className="site-overlay black-overlay-1" onClick={props.onClose}></div>;
     }
 
+    const _checkUserValidity = () => {
+        let isValid = true;
+        let message = '';
+        if (user.value.length < 4) {
+            isValid = false;
+            message = 'Username is too short';
+        }
+        if (user.value.includes('@')) {
+            if (null === user.value.toLowerCase().match(/^[a-z0-9-_.]{3,}@[a-z0-9-_.]{3,}.[a-z-_.]{2,}$/g)) {
+                isValid = false;
+                message = 'Invalid e-mail address';
+            } else {
+                setForm({
+                    ...form,
+                    isEmail: true
+                })
+            }
+        } else {
+            if (null === user.value.match(/^[A-Za-z0-9.-_]+$/g)) {
+                isValid = false;
+                message = 'Invalid characters';
+            } else {
+                setForm({
+                    ...form,
+                    isEmail: false
+                })
+            }
+        }
+        setUser({
+            ...user,
+            isValid: isValid,
+            message: message
+        });
+
+        return isValid;
+    }
+
+    const _checkPassValidity = () => {
+        let isValid = true;
+        let message = '';
+        if (pass.value.length < 5) {
+            isValid = false;
+            message = 'Password is too short';
+        }
+        setPass({
+            ...pass,
+            isValid: isValid,
+            message: message
+        });
+
+        return isValid;
+    }
+
     const handleInput = (e) => {
         const val = e.target.value;
         const inputName = e.target.name;
-        let message = '';
-        let isValid = true;
         switch(inputName) {
             case 'username':
-                if (val.length < 4) {
-                    isValid = false;
-                    message = 'Username is too short';
-                }
-                if (val.includes('@')) {
-                    if (null === val.toLowerCase().match(/^[a-z0-9-_.]{3,}@[a-z0-9-_.]{3,}.[a-z-_.]{2,}$/g)) {
-                        isValid = false;
-                        message = 'Invalid e-mail address';
-                    } else {
-                        setForm({
-                            ...form,
-                            isEmail: true
-                        })
-                    }
-                } else {
-                    if (null === val.match(/^[A-Za-z0-9.-_]+$/g)) {
-                        isValid = false;
-                        message = 'Invalid characters';
-                    } else {
-                        setForm({
-                            ...form,
-                            isEmail: false
-                        })
-                    }
-                }
                 setUser({
+                    ...user,
                     value: val,
-                    isValid: isValid,
-                    message: message
                 });
                 break;
             case 'password':
-                if (val.length < 5) {
-                    isValid = false;
-                    message = 'Password is too short';
-                }
                 setPass({
+                    ...pass,
                     value: val,
-                    isValid: isValid,
-                    message: message
                 });
                 break;
             default:
@@ -117,7 +141,6 @@ const Login = (props) => {
             }).then((response) => {
                 const data = response.data;
                 if (data.success) {
-                    console.log('login res', data);
                     const isAdmin = data.user.Group === 'admins';
                     const user = {
                         id: data.user.ID,
@@ -139,8 +162,6 @@ const Login = (props) => {
                             if (form.isEmail) {
                                 message = 'Invalid e-mail or password:';
                             }
-                            setUser({...user, isValid: false});
-                            setPass({...pass, isValid: false});
                             break;
                         case 2:
                         default:
@@ -152,7 +173,6 @@ const Login = (props) => {
                         isValid: false,
                         message: message
                     });
-                    console.log(data);
                 } else {
                     setForm({
                         ...form,
