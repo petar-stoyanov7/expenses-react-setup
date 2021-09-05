@@ -4,7 +4,7 @@ import './HeaderButton.scss';
 const HeaderButton = (props) => {
     return (
         <div
-            className={`header-button ${props.customClass}`}
+            className={`header-button ${undefined !== props.customClass ? props.customClass : ''}`}
             onClick={props.method}
         >
             <span className="header-button__description">

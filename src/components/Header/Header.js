@@ -16,8 +16,10 @@ import iconLogout from "../../assets/icons/icon-logout.svg";
 const Header = (props) => {
     const ctx = useContext(AuthContext);
 
+    console.log('header', ctx);
+
     return (
-        <header className="top-bar">
+        <header className={`top-bar${ctx.isLoggedIn ? ' is-logged' : '' }`}>
             <div className="site-logo">
                 {/*<a href="/">*/}
                 {/*    <img src={siteLogo} alt='Site Logo'/>*/}
@@ -34,6 +36,7 @@ const Header = (props) => {
                 {ctx.isLoggedIn && (
                     <React.Fragment>
                         <HeaderButton
+                            customClass='teal-icon'
                             text='New Expense'
                             imageUrl={iconAdd}
                             imageAlt='New Expense'
@@ -54,7 +57,7 @@ const Header = (props) => {
                     </React.Fragment>
                 )}
                 <div className="test">
-                    {ctx.isAdmin === 1 && (
+                    {ctx.isAdmin && (
                         <HeaderButton
                             text='Admin Panel'
                             imageUrl={iconAdmin}

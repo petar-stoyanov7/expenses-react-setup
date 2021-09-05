@@ -1,16 +1,16 @@
 @import '../../Main';
 
 .header-button {
-  max-width: 30%;
+  max-width: 20%;
   height: 100%;
   width: auto;
   cursor: pointer;
   position: relative;
-  margin-right: 15px;
 
   &.smaller-icon {
     height: 50%;
     margin: auto 0;
+    max-width: none;
   }
 
   &__image {
