@@ -61,6 +61,16 @@
   &.is-logged {
     .toolbar {
       width: 90%;
+
+      @media (min-width: $medium) {
+        width: 75%;
+      }
+      @media (min-width: $large) {
+        width: 65%;
+      }
+      @media (min-width: $xlarge) {
+        width: 55%;
+      }
     }
     .login {
       width: 10%;
