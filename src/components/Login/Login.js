@@ -1,4 +1,4 @@
-import React, {isValidElement, useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import Card from "../UI/Card";
 import ReactDOM from "react-dom";
 import AuthContext from "../../Store/auth-context";
@@ -39,7 +39,7 @@ const Login = (props) => {
                         message: ''
                     })
                 }
-            }, 300);
+            }, 150);
 
             return () => {
                 clearTimeout(timer);
@@ -157,13 +157,13 @@ const Login = (props) => {
                 } else if (!data.success) {
                     let message = '';
                     switch(data.status) {
-                        case 1:
+                        case 2:
                             message = 'Invalid username or password';
                             if (form.isEmail) {
                                 message = 'Invalid e-mail or password:';
                             }
                             break;
-                        case 2:
+                        case 1:
                         default:
                             message = 'We have a problem with this app, please try again later';
                             break;
@@ -192,8 +192,8 @@ const Login = (props) => {
                 overlayContainer
             )}
             <Card customClass="login-form">
-                <button className="login-form__close" onClick={props.onClose}>
-                    <img src={iconClose} className="login-form__close-icon" alt="close button"/>
+                <button className="icon-modal-close" onClick={props.onClose}>
+                    <img src={iconClose} className="icon-modal-close__icon" alt="close button"/>
                 </button>
                 <form className="login-form__form" onSubmit={onSubmit}>
                     <h1 className="login-form__title">Login</h1>
@@ -228,25 +228,33 @@ const Login = (props) => {
                         onChange={handleInput}
                         placeholder='Password'
                     />
-                    <input
-                        className={
-                            user.isValid &&
+                    <div className="login-form__actions">
+                        <button
+                            className={`exp-button exp-button__success ${user.isValid &&
                             pass.isValid &&
                             user.value.length > 0 &&
                             pass.value.length > 0
-                            ? '' : 'disabled'
-                        }
-                        type="submit"
-                        value="Login"
-                    />
-                    <button
-                        type='button'
-                        className="login-form__button-cancel"
-                        value="Cancel"
-                        onClick={props.onClose}
-                    >
-                        Cancel
-                    </button>
+                                ? '' : ' disabled'}`}
+                            type="submit"
+                        >
+                            Submit
+                        </button>
+                        <button
+                            className='exp-button exp-button__new'
+                            type='button'
+                            onClick={props.onRegister}
+                        >
+                            Register
+                        </button>
+                        <button
+                            type='button'
+                            className="exp-button exp-button__danger"
+                            value="Cancel"
+                            onClick={props.onClose}
+                        >
+                            Cancel
+                        </button>
+                    </div>
                 </form>
             </Card>
         </React.Fragment>

@@ -13,8 +13,10 @@ import iconLogin from "../../assets/icons/icon-login.svg";
 import iconRegister from "../../assets/icons/icon-register.svg";
 import iconLogout from "../../assets/icons/icon-logout.svg";
 
-const Header = (props) => {
+const Header = () => {
     const ctx = useContext(AuthContext);
+
+    console.log('hdr', ctx.userDetails);
 
     return (
         <header className={`top-bar${ctx.isLoggedIn ? ' is-logged' : '' }`}>
@@ -31,7 +33,7 @@ const Header = (props) => {
                     imageAlt='Home Page'
                     onClick=''
                 />
-                {ctx.isLoggedIn && (
+                {ctx.userDetails.isLogged && (
                     <React.Fragment>
                         <HeaderButton
                             customClass='teal-icon'
@@ -55,7 +57,7 @@ const Header = (props) => {
                     </React.Fragment>
                 )}
                 <div className="test">
-                    {ctx.isAdmin && (
+                    {ctx.userDetails.isAdmin && (
                         <HeaderButton
                             text='Admin Panel'
                             imageUrl={iconAdmin}
@@ -66,7 +68,7 @@ const Header = (props) => {
                 </div>
             </div>
             <div className="login">
-                {!ctx.isLoggedIn && (
+                {!ctx.userDetails.isLogged && (
                     <React.Fragment>
                         <HeaderButton
                             customClass='smaller-icon teal-icon'
@@ -84,7 +86,7 @@ const Header = (props) => {
                         />
                     </React.Fragment>
                 )}
-                {ctx.isLoggedIn && (
+                {ctx.userDetails.isLogged && (
                     <HeaderButton
                         customClass='smaller-icon orange-icon'
                         text='Logout'

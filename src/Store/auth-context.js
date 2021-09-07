@@ -8,9 +8,10 @@ import axios from "axios";
 
 const AuthContext = createContext({
     isLoggedIn: false,
-    userId: null,
-    user: {},
-    isAdmin: false,
+    // userId: null,
+    // user: {},
+    // isAdmin: false,
+    // userDetails: {},
     ajaxConfig: {},
     showLogin: () => {},
     showRegister: () => {},
@@ -25,26 +26,28 @@ export const AuthContextProvider = (props) => {
         isLogged: false,
         isAdmin: false,
         user: {}
-    })
-
+    });
 
     const [cookies, setCookie, removeCookie] = useCookies(['user']);
 
     useEffect(() => {
+        console.log('context check');
         const storedUserId = parseInt(cookies.expUserId);
         const storedLoggedIn = parseInt(cookies.expIsLoggedIn) === 1;
         const storedIsAdmin = parseInt(cookies.expIsAdmin) === 1;
 
-        if (Boolean(storedUserId) && storedLoggedIn) {
+        if (
+            Boolean(storedUserId) &&
+            storedLoggedIn &&
+            !userDetails.isLogged
+        ) {
             const path = ajaxConfig.server + ajaxConfig.getUser;
             axios.post(path, {
                 id: storedUserId,
                 hash: ajaxConfig.hash
             }).then((response) => {
-                console.log(response);
                 const data = response.data;
                 if (data.success) {
-                    console.log('success');
                     const user = {
                         id: data.user.ID,
                         username: data.user.Username,
@@ -62,18 +65,23 @@ export const AuthContextProvider = (props) => {
                         user: user,
                     });
                     hideLoginForm();
+                    hideRegisterForm();
                 }
             });
         }
-    }, []);
+    }, [userDetails]);
 
     const showLoginForm = () => {
+        console.log('login');
+        console.log(userDetails);
         if (!userDetails.isLogged) {
+            setShowRegister(false);
             setShowLogin(true);
         }
     }
     const showRegisterForm = () => {
         if (!userDetails.isLogged) {
+            setShowLogin(false);
             setShowRegister(true);
         }
     }
@@ -87,27 +95,22 @@ export const AuthContextProvider = (props) => {
     }
 
     const logoutHandler = () => {
-        console.log('logout handler');
+        removeCookie('expUserId');
+        removeCookie('expIsLoggedIn');
+        removeCookie('expIsAdmin');
+
         setUserDetails({
             isLogged: false,
             isAdmin: false,
             user: {}
         });
-        removeCookie('expUserId');
-        removeCookie('expIsLoggedIn');
-        removeCookie('expIsAdmin');
     };
 
     const loginHandler = (user, isAdmin) => {
-        setUserDetails({
-            isLogged: true,
-            isAdmin: false,
-            user: user
-        });
-        console.log('isadmin', isAdmin);
+        console.log('Logging in');
         setCookie('expUserId', user.id, {path: '/'});
         setCookie('expIsLoggedIn', 1, {path: '/'});
-        setCookie('expIsAdmin', isAdmin, {path: '/'});
+        setCookie('expIsAdmin', isAdmin ? 1 : 0, {path: '/'});
         setUserDetails({
             isLogged: true,
             isAdmin: isAdmin,
@@ -124,11 +127,12 @@ export const AuthContextProvider = (props) => {
     return (
         <AuthContext.Provider
             value={{
-                isLoggedIn: userDetails.isLogged,
-                userId: userDetails.userId,
-                user: userDetails.user,
-                isAdmin: userDetails.isAdmin,
+                // isLoggedIn: userDetails.isLogged,
+                // userId: userDetails.userId,
+                // user: userDetails.user,
+                // isAdmin: userDetails.isAdmin,
                 ajaxConfig: ajaxConfig,
+                userDetails: userDetails,
                 showLogin: showLoginForm,
                 showRegister: showRegisterForm,
                 onLogin: loginHandler,
@@ -140,6 +144,7 @@ export const AuthContextProvider = (props) => {
                 showLogin &&
                 <Login
                     onLogin={loginHandler}
+                    onRegister={showRegisterForm}
                     onClose={hideLoginForm}
                 />
             }
