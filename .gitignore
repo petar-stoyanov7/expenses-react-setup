@@ -1,5 +1,5 @@
 node_modules/
 build/
-src/cfg/
+src/cfg/ajax.json
 .idea/
 package-lock.json
