@@ -7,40 +7,41 @@ import React, {
 
 import './LastFive.scss';
 import AuthContext from "../../Store/auth-context";
+import axios from "axios";
 // import ExpenseTable from "../UI/ExpenseTable";
 
 const dummyData = [
     {
         id: 0,
-        Expense_ID: 1,
+        expenseType: 'fuel',
+        expenseDetail: 'Gasoline',
         mileage: '114300',
         date: '2021.01.01',
         carName: 'BMW 330i',
-        fuelType: 'Gasoline',
         liters: 8,
         price: 20,
-        notes: '...'
+        notes: 'theft'
     },
     {
         id: 1,
-        Expense_ID: 1,
+        expenseType: 'fuel',
+        expenseDetail: 'LPG',
         mileage: '114500',
         date: '2021.01.01',
         carName: 'BMW 330i',
-        fuelType: 'LPG',
         liters: 33,
         price: 50,
-        notes: '...'
+        notes: 'crap gas station'
     },
     {
         id: 2,
-        Expense_ID: 2,
+        expenseType: 'insurance',
+        expenseDetail: 'Kasko + GO',
         mileage: '115010',
         date: '2021.01.01',
         carName: 'BMW 330i',
-        insuranceName: 'Kasko + GO',
         price: 50,
-        notes: '...'
+        notes: 'Taxation is theft!'
     },
 ];
 
@@ -49,7 +50,27 @@ const LastFive = (props) => {
     const [lastFive, setLastFive] = useState(dummyData);
 
     useEffect(() => {
-        //get from DB
+        const ajaxCfg = ctx.ajaxConfig;
+        console.log('ajax',ajaxCfg);
+        let data = {
+            hash: ctx.ajaxConfig.hash
+        }
+        switch(props.type) {
+            case 'car':
+                data['carId'] = props.carId;
+                break;
+            case 'user':
+                data['userId'] = props.userId;
+                break;
+            default:
+                data['userId'] = ctx.userDetails.user.id;
+                break;
+        }
+        axios.post(`${ajaxCfg.server}${ajaxCfg.getLastFive}`, data)
+            .then((response) => {
+                console.log('last five');
+                console.log(response);
+            });
     }, [ctx]);
 
     return (

@@ -16,14 +16,9 @@ const dummyData = {
 const HomePage = (props) => {
     const ctx = useContext(AuthContext);
 
-    console.log('homepage');
-    console.log(ctx.userDetails);
-
     const [userData, setUserData] = useState(dummyData);
 
     useEffect(() => {
-        console.log('homepage effect');
-        console.log(ctx);
         if (undefined !== ctx.userDetails.user && Object.keys(ctx.userDetails.user).length !== 0) {
             setUserData({
                 ...userData,
@@ -52,7 +47,7 @@ const HomePage = (props) => {
                 <CarList />
             </Container>
             <Container>
-                <LastFive />
+                <LastFive type="user" userId={ctx.userDetails.user.id}/>
             </Container>
         </div>
         );
