@@ -10,15 +10,20 @@ const Car = (props) => {
             <h3 className='car-element__title'>
                 {`${car.brand} ${car.model}`}
             </h3>
-            <span className='car-element__fuel'>
-                {`${car.mainFuel}${null !== car.secondaryFuel ? `/${car.secondaryFuel}` : ''}`}
-            </span>
-            <span className='car-element__color'>
-                {car.color}
-            </span>
-            <span className="car-element__notes">
-                {car.notes}
-            </span>
+            <div className="car-element__container">
+                <span className='car-element__fuel'>
+                    <span className="car-element__name">Fuel: </span>
+                    {`${car.mainFuel}${null !== car.secondaryFuel ? `/${car.secondaryFuel}` : ''}`}
+                </span>
+                    <span className='car-element__color'>
+                    <span className="car-element__name">Color: </span>
+                        {car.color}
+                </span>
+                    <span className="car-element__notes">
+                    <span className="car-element__name">Notes: </span>
+                        {car.notes}
+                </span>
+            </div>
         </Card>
     )
 }
