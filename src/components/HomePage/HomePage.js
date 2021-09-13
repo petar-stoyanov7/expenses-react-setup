@@ -33,6 +33,9 @@ const HomePage = (props) => {
     return (
         <div className='homepage'>
             <Container customClass="half-width">
+                {!ctx.userDetails.isLogged && (
+                    <h1 style={{color: 'red'}}>This is an example page!</h1>
+                )}
                 <h3 className='container-title'>Welcome back, {userData.name}</h3>
                 <div className="content">
                 <div>

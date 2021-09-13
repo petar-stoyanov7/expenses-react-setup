@@ -1,11 +1,14 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 import './CarModal.scss';
 import Card from "../UI/Card";
 import iconClose from "../../assets/icons/icon-close.svg";
+import LastFive from "../LastFive/LastFive";
 
 const CarModal = (props) => {
     const car = props.car;
+    const ajaxCfg = props.ajaxCfg;
+
     return (
         <Card customClass='car-details'>
             <button className='car-details__close icon-modal-close' onClick={props.onClose}>
@@ -35,6 +38,7 @@ const CarModal = (props) => {
                     {car.notes}
                 </span>
             </article>
+            <LastFive type='car' carId={car.id} isSmall={true}/>
             {props.showControls && (
                 <div className="car-details__actions">
                     <button className="exp-button exp-button__new">

@@ -48,9 +48,10 @@
     }
   }
 
-  &.small {
+  &.exp-small {
     th,td {
       font-size: 12px;
+      padding: 0;
 
       @media (min-width: $medium) {
         font-size: 14px;

@@ -1,6 +1,5 @@
 import React, {useEffect, useState, createContext} from 'react';
 import {useCookies} from "react-cookie";
-// import LoginForm from "../components/Login/LoginForm";
 import Login from "../components/Login/Login";
 import RegisterForm from "../components/Register/RegisterForm";
 import ajaxConfig from "../cfg/ajax.json";
@@ -8,10 +7,6 @@ import axios from "axios";
 
 const AuthContext = createContext({
     isLoggedIn: false,
-    // userId: null,
-    // user: {},
-    // isAdmin: false,
-    // userDetails: {},
     ajaxConfig: {},
     showLogin: () => {},
     showRegister: () => {},
@@ -31,7 +26,6 @@ export const AuthContextProvider = (props) => {
     const [cookies, setCookie, removeCookie] = useCookies(['user']);
 
     useEffect(() => {
-        console.log('context check');
         const storedUserId = parseInt(cookies.expUserId);
         const storedLoggedIn = parseInt(cookies.expIsLoggedIn) === 1;
         const storedIsAdmin = parseInt(cookies.expIsAdmin) === 1;
@@ -73,7 +67,6 @@ export const AuthContextProvider = (props) => {
 
     const showLoginForm = () => {
         console.log('login');
-        console.log(userDetails);
         if (!userDetails.isLogged) {
             setShowRegister(false);
             setShowLogin(true);
@@ -127,10 +120,6 @@ export const AuthContextProvider = (props) => {
     return (
         <AuthContext.Provider
             value={{
-                // isLoggedIn: userDetails.isLogged,
-                // userId: userDetails.userId,
-                // user: userDetails.user,
-                // isAdmin: userDetails.isAdmin,
                 ajaxConfig: ajaxConfig,
                 userDetails: userDetails,
                 showLogin: showLoginForm,

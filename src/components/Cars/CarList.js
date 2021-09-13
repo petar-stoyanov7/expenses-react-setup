@@ -23,16 +23,17 @@ const dummyData = [
         lastYearSpent: 4315
     }
 ];
+const dummyCarData = {
+    showModal: false,
+    car: {}
+}
 
 const CarList = (props) => {
     const ctx = useContext(AuthContext);
     const showControls = undefined !== props.showControls ? props.showControls : false;
 
     const [carList, setCarList] = useState(dummyData);
-    const [carModal, setCarModal] = useState({
-        showModal: false,
-        car: {}
-    });
+    const [carModal, setCarModal] = useState(dummyCarData);
 
     const hideCarDetails = () => {
         setCarModal({
@@ -79,6 +80,7 @@ const CarList = (props) => {
             });
         } else {
             setCarList(dummyData);
+            setCarModal(dummyCarData);
         }
     }, [ctx]);
 
@@ -88,9 +90,9 @@ const CarList = (props) => {
                 <Fragment>
                     <CarModal
                         onClose={hideCarDetails}
+                        ajaxCfg={ctx.ajaxConfig}
                         car={carModal.car}
                         showControls={showControls}
-
                     />
                     {ReactDOM.createPortal(
                         <BlackOverlay />,

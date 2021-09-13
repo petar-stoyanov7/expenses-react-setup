@@ -17,7 +17,7 @@ const Header = () => {
     const ctx = useContext(AuthContext);
 
     return (
-        <header className={`top-bar${ctx.isLoggedIn ? ' is-logged' : '' }`}>
+        <header className={`top-bar${ctx.userDetails.isLogged ? ' is-logged' : '' }`}>
             <div className="site-logo">
                 {/*<a href="/">*/}
                 {/*    <img src={siteLogo} alt='Site Logo'/>*/}
@@ -65,7 +65,7 @@ const Header = () => {
                     )}
                 </div>
             </div>
-            <div className="login">
+            <div className={`login${ctx.userDetails.isLogged ? ' is-logged' : ''}`}>
                 {!ctx.userDetails.isLogged && (
                     <React.Fragment>
                         <HeaderButton

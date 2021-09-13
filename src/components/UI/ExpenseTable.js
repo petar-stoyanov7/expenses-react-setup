@@ -3,12 +3,24 @@ import './ExpenseTable.scss';
 
 const ExpenseTable = (props) => {
     let expenses;
-    console.log('exp', props.expenses);
+    let tableClass = "expenses-list";
+
+    if (null != props.isDetailed) {
+        tableClass += " exp-detailed";
+    }
+    if (null != props.isSmall) {
+        tableClass += " exp-small";
+    }
 
 
-    if (null === props.expenses || props.expenses.length === 0) {
-        console.log('no expenses');
-        expenses = '<td>No expenses recorded</td>'
+
+
+    if (null == props.expenses) {
+        expenses = (
+            <tr>
+                <td>No expenses recorded</td>
+            </tr>
+        )
     } else {
         expenses = props.expenses.map((expense) => {
             return (
@@ -49,10 +61,7 @@ const ExpenseTable = (props) => {
 
     return (
         <table
-            className={`expenses-list
-                ${props.isDetailed} ? ' detailed' : ''}
-                ${props.isSmall} ? ' small' : ''}
-            `}
+            className={tableClass}
             cellSpacing='0'
         >
             <thead className='expenses-list__header'>
