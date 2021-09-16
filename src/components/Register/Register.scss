@@ -62,10 +62,11 @@
       flex-basis: 100%;
     }
     &.input-username {
-      flex-basis: 70%;
+      flex-basis: 65%;
+      margin-right: 10px;
     }
     &.input-gender {
-      flex-basis: calc(30% - 10px);
+      flex-basis: calc(35% - 10px);
     }
     &.input-city {
       flex-basis: 100%;

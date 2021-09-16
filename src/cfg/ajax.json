@@ -4,6 +4,7 @@
   "login": "/account/login",
   "getUser": "/account/get-user",
   "getCars": "/cars/get-user-cars",
+  "getOverall": "/statistics/get-overall",
   "getLastFive": "/statistics/get-last-five",
   "register": "/account/register"
 }

@@ -61,8 +61,6 @@ const CarList = (props) => {
                 hash: ajaxCfg.hash
             }).then((response) => {
                 const data = response.data;
-                console.log('response data');
-                console.log(data);
                 if (data.success) {
                     const formattedCarList = data.cars.map((car) => {
                         return {
@@ -86,7 +84,7 @@ const CarList = (props) => {
             setCarList(dummyData);
             setCarModal(dummyCarData);
         }
-    }, [ctx]);
+    }, [ctx.userDetails]);
 
     return (
         <Fragment>
