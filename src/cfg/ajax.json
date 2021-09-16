@@ -5,5 +5,5 @@
   "getUser": "/account/get-user",
   "getCars": "/cars/get-user-cars",
   "getLastFive": "/statistics/get-last-five",
-  "register": "/register"
+  "register": "/account/register"
 }

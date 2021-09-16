@@ -35,7 +35,7 @@ const Login = (props) => {
                 if (userIsValid && passIsValid) {
                     setForm({
                         ...form,
-                        isValid: user.isValid && pass.isValid,
+                        isValid: userIsValid && passIsValid,
                         message: ''
                     })
                 }
