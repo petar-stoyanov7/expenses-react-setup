@@ -13,7 +13,7 @@ import iconLogin from "../../assets/icons/icon-login.svg";
 import iconRegister from "../../assets/icons/icon-register.svg";
 import iconLogout from "../../assets/icons/icon-logout.svg";
 
-const Header = () => {
+const Header = (props) => {
     const ctx = useContext(AuthContext);
 
     return (
@@ -26,19 +26,19 @@ const Header = () => {
 
             <div className="toolbar">
                 <HeaderButton
+                    clickAction={props.setHomepage}
                     text='Home'
                     imageUrl={iconHome}
                     imageAlt='Home Page'
-                    onClick=''
                 />
                 {ctx.userDetails.isLogged && (
                     <React.Fragment>
                         <HeaderButton
+                            clickAction={props.setNewExpense}
                             customClass='teal-icon'
                             text='New Expense'
                             imageUrl={iconAdd}
                             imageAlt='New Expense'
-                            onClick=''
                         />
                         <HeaderButton
                             text='Statistics'
@@ -73,14 +73,14 @@ const Header = () => {
                             text='Login'
                             imageUrl={iconLogin}
                             imageAlt='Login'
-                            method={ctx.showLogin}
+                            clickAction={ctx.showLogin}
                         />
                         <HeaderButton
                             customClass='smaller-icon'
                             text='Register'
                             imageUrl={iconRegister}
                             imageAlt='Register'
-                            method={ctx.showRegister}
+                            clickAction={ctx.showRegister}
                         />
                     </React.Fragment>
                 )}
@@ -90,7 +90,7 @@ const Header = () => {
                         text='Logout'
                         imageUrl={iconLogout}
                         imageAlt='Logout'
-                        method={ctx.onLogout}
+                        clickAction={ctx.onLogout}
                     />
                 )}
             </div>

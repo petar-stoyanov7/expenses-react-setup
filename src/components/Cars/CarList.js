@@ -34,6 +34,10 @@ const CarList = (props) => {
 
     const [carList, setCarList] = useState(dummyData);
     const [carModal, setCarModal] = useState(dummyCarData);
+    const [activeCar, setActiveCar] = useState();
+
+    const isDetailed = null != props.isDetailed ? props.isDetailed : false;
+    const hasModal = null != props.hasModal ? props.hasModal : false;
 
     const hideCarDetails = () => {
         setCarModal({
@@ -72,7 +76,9 @@ const CarList = (props) => {
                             mileage: car.Mileage,
                             mainFuel: car.fuel_name1,
                             secondaryFuel: car.fuel_name2,
-                            notes: car.Notes
+                            notes: car.Notes,
+                            fuelId: car.Fuel_ID,
+                            fuelId2: car.Fuel_ID2
                         }
                     });
                     setCarList(formattedCarList);
@@ -82,13 +88,25 @@ const CarList = (props) => {
             });
         } else {
             setCarList(dummyData);
-            setCarModal(dummyCarData);
+            if (hasModal) {
+                setCarModal(dummyCarData);
+            }
         }
     }, [ctx.userDetails]);
 
+    const clickAction = (car) => {
+        setActiveCar(car.id);
+        if (null != props.clickAction) {
+            props.clickAction(car);
+        } else {
+            showCarDetails(car);
+        }
+    }
+
+
     return (
         <Fragment>
-            {carModal.showModal && (
+            {(carModal.showModal && hasModal) && (
                 <Fragment>
                     <CarModal
                         onClose={hideCarDetails}
@@ -103,15 +121,19 @@ const CarList = (props) => {
                 </Fragment>
             )}
             <div className="car-list">
-                <h3 className='container-title'>Cars:</h3>
+                {isDetailed && (
+                    <h3 className='container-title'>Cars:</h3>
+                )}
 
                 <div className="car-list__cars">
                     {carList.map((car) => {
                         return (
                             <Car
+                                customClass={car.id === activeCar ? 'is-active' : ''}
                                 key={car.id}
                                 currentCar={car}
-                                clickAction={() => {showCarDetails(car)}}
+                                clickAction={() => {clickAction(car)}}
+                                isDetailed={isDetailed}
                             />
                         );
                     })}

@@ -88,6 +88,7 @@ export const AuthContextProvider = (props) => {
     }
 
     const logoutHandler = () => {
+        console.log('logging out');
         removeCookie('expUserId');
         removeCookie('expIsLoggedIn');
         removeCookie('expIsAdmin');
@@ -113,11 +114,6 @@ export const AuthContextProvider = (props) => {
         hideRegisterForm();
     }
 
-    const registerHandler = () => {
-        console.log('reg handler');
-        //register form
-    }
-
     return (
         <AuthContext.Provider
             value={{
@@ -126,8 +122,7 @@ export const AuthContextProvider = (props) => {
                 showLogin: showLoginForm,
                 showRegister: showRegisterForm,
                 onLogin: loginHandler,
-                onLogout: logoutHandler,
-                onRegister: showRegisterForm
+                onLogout: logoutHandler
             }}
         >
             {
@@ -141,7 +136,6 @@ export const AuthContextProvider = (props) => {
             {
                 showRegister &&
                 <Register
-                    onRegister={registerHandler}
                     onLogin={showLoginForm}
                     onClose={hideRegisterForm}
                 />

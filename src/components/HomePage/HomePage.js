@@ -4,6 +4,7 @@ import Container from "../UI/Container";
 import CarList from "../Cars/CarList";
 import AuthContext from "../../Store/auth-context";
 import LastFive from "../LastFive/LastFive";
+import CarModal from "../Cars/CarModal";
 import axios from "axios";
 
 const currentDate = new Date();
@@ -42,7 +43,6 @@ const HomePage = (props) => {
                 const data = response.data;
 
                 if (data.success) {
-                    console.log('month total');
                     setUserData(prevState => ({
                         ...prevState,
                         monthTotal: data.sum
@@ -64,8 +64,6 @@ const HomePage = (props) => {
                 const data = response.data;
 
                 if (data.success) {
-                    console.log('year total');
-                    console.log(data.sum);
                     setUserData(prevState => ({
                         ...prevState,
                         yearTotal: data.sum
@@ -79,7 +77,6 @@ const HomePage = (props) => {
             });
 
         } else {
-            console.log('dummy data');
             setUserData(dummyData);
         }
     }, [ctx.userDetails]);
@@ -105,9 +102,12 @@ const HomePage = (props) => {
                 </div>
             </Container>
             <Container customClass="half-width">
-                <CarList />
+                <CarList
+                    isDetailed={true}
+                    hasModal={true}
+                />
             </Container>
-            <Container>
+            <Container customClass="full-width">
                 <LastFive type="user" userId={ctx.userDetails.user.id}/>
             </Container>
         </div>

@@ -4,7 +4,10 @@
   "login": "/account/login",
   "getUser": "/account/get-user",
   "getCars": "/cars/get-user-cars",
+  "getFuels": "/cars/get-fuel-list",
   "getOverall": "/statistics/get-overall",
   "getLastFive": "/statistics/get-last-five",
-  "register": "/account/register"
+  "register": "/account/register",
+  "getExpenses": "/expense/get-expenses",
+  "getInsurances": "/expense/get-insurances"
 }

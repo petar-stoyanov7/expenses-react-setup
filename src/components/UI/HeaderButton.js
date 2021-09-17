@@ -5,7 +5,7 @@ const HeaderButton = (props) => {
     return (
         <div
             className={`header-button ${undefined !== props.customClass ? props.customClass : ''}`}
-            onClick={props.method}
+            onClick={props.clickAction}
         >
             <span className="header-button__description">
                 {props.text}

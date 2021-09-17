@@ -50,4 +50,12 @@
     font-weight: 500;
   }
 
+  &.brief {
+    width: auto;
+    margin-right: 10px;
+    padding: 6px;
+    &>* {
+      margin-bottom: 0;
+    }
+  }
 }

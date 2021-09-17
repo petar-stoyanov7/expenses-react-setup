@@ -6,6 +6,10 @@
   flex-direction: row;
   flex-wrap: wrap;
 
+  .full-width {
+    width: 100%;
+  }
+
   .half-width {
     width: 100%;
     margin-right: 0;
