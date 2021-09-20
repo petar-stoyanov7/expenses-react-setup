@@ -92,7 +92,7 @@ const CarList = (props) => {
                 setCarModal(dummyCarData);
             }
         }
-    }, [ctx.userDetails]);
+    }, [ctx.userDetails, ctx.ajaxConfig]);
 
     const clickAction = (car) => {
         setActiveCar(car.id);

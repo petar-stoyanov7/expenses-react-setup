@@ -4,7 +4,6 @@ import Container from "../UI/Container";
 import CarList from "../Cars/CarList";
 import AuthContext from "../../Store/auth-context";
 import LastFive from "../LastFive/LastFive";
-import CarModal from "../Cars/CarModal";
 import axios from "axios";
 
 const currentDate = new Date();
@@ -79,7 +78,7 @@ const HomePage = (props) => {
         } else {
             setUserData(dummyData);
         }
-    }, [ctx.userDetails]);
+    }, [ctx.userDetails, ctx.ajaxConfig]);
 
 
     return (

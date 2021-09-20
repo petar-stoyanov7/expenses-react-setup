@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 
 import './CarModal.scss';
 import Card from "../UI/Card";
@@ -7,7 +7,6 @@ import LastFive from "../LastFive/LastFive";
 
 const CarModal = (props) => {
     const car = props.car;
-    const ajaxCfg = props.ajaxCfg;
 
     return (
         <Card customClass='car-details'>
