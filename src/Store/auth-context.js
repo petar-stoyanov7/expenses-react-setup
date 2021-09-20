@@ -63,7 +63,12 @@ export const AuthContextProvider = (props) => {
                 }
             });
         }
-    }, [userDetails]);
+    }, [
+        userDetails,
+        cookies.expUserId,
+        cookies.expIsLoggedIn,
+        cookies.expIsAdmin
+    ]);
 
     const showLoginForm = () => {
         console.log('login');

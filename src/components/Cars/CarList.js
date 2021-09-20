@@ -34,7 +34,8 @@ const CarList = (props) => {
 
     const [carList, setCarList] = useState(dummyData);
     const [carModal, setCarModal] = useState(dummyCarData);
-    const [activeCar, setActiveCar] = useState();
+    // const [activeCar, setActiveCar] = useState(null);
+    const activeCar = props.activeCar;
 
     const isDetailed = null != props.isDetailed ? props.isDetailed : false;
     const hasModal = null != props.hasModal ? props.hasModal : false;
@@ -95,7 +96,6 @@ const CarList = (props) => {
     }, [ctx.userDetails, ctx.ajaxConfig]);
 
     const clickAction = (car) => {
-        setActiveCar(car.id);
         if (null != props.clickAction) {
             props.clickAction(car);
         } else {

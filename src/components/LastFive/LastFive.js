@@ -80,7 +80,7 @@ const LastFive = (props) => {
         } else {
             setLastFive(dummyData);
         }
-    }, [ctx.userDetails.isLogged]);
+    }, [ctx.userDetails, ctx.ajaxConfig]);
 
     return (
         <Fragment>

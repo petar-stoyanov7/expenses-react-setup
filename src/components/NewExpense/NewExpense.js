@@ -6,16 +6,19 @@ import CarList from "../Cars/CarList";
 import Card from "../UI/Card";
 import AuthContext from "../../Store/auth-context";
 import axios from "axios";
-import moment from "moment";
+// import moment from "moment";
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
-const currentDate = moment().locale('en').format('YYYY-MM-DD');
+// const currentDate = moment().locale('en').format('YYYY-MM-DD');
+const currentDate = new Date();
 
 const NewExpense = () => {
     const ctx = useContext(AuthContext);
     const ajx = ctx.ajaxConfig;
 
     const [activeCar, setActiveCar] = useState(null);
-    const [expenseType, setExpenseType] = useState(1);
+    const [expenseType, setExpenseType] = useState(null);
     const [fuelType, setFuelType] = useState(null);
     const [insuranceType, setInsuranceType] = useState(null);
     const [expenseList, setExpenseList] = useState([]);
@@ -24,8 +27,8 @@ const NewExpense = () => {
     const [possibleFuels, setPossibleFuels] = useState([]);
     const [mileage, setMileage] = useState(0);
     const [date, setDate] = useState(currentDate);
+    const [formIsValid, setFormIsValid] = useState(false);
 
-    let secondaryContainer;
 
     useEffect(() => {
         axios.post(ajx.server+ajx.getExpenses, {hash: ajx.hash})
@@ -48,9 +51,23 @@ const NewExpense = () => {
             });
     }, []);
 
+    useEffect(() => {
+        let validity = null !== activeCar && null !== expenseType && 0 !== mileage;
+        if (validity && expenseType === '1') {
+            validity = null !== fuelType;
+        }
+        if (validity && expenseType === '2') {
+            validity = null !== insuranceType;
+        }
+        setFormIsValid(validity);
+    }, [activeCar, expenseType, fuelType, insuranceType, mileage, date]);
+
     const setCar = (car) => {
         setActiveCar(car);
         setMileage(car.mileage);
+        setInsuranceType(null);
+        setFuelType(null);
+
         let carFuels = [];
         fuelList.map((fuel) => {
             if (fuel.ID === car.fuelId) {
@@ -71,6 +88,8 @@ const NewExpense = () => {
 
     const setExpense = (expenseId) => {
         setExpenseType(expenseId);
+        setInsuranceType(null);
+        setFuelType(null);
     }
 
     const setFuel = (fuelId) => {
@@ -78,45 +97,31 @@ const NewExpense = () => {
     }
 
     const setInsurance = (insuranceId) => {
-        console.log(insuranceId);
         setInsuranceType(insuranceId);
     }
 
-    const fuelContainer = (
-        <div className="new-expense__fuels">
-            {possibleFuels.map((fuel) => {
-                let customClass = "item-selector";
-                customClass += fuel.id === fuelType ? ' is-active' : '';
-                return (
-                    <Card
-                        customClass={customClass}
-                        key={fuel.id}
-                        clickAction={() => {setFuel(fuel.id)}}
-                    >
-                        {fuel.name}
-                    </Card>
-                );
-            })}
-        </div>
-    );
+    const resetForm = () => {
+        setExpense(null);
+        setActiveCar(null);
+        setFuelType(null);
+        setInsuranceType(null);
+        setMileage(0);
+        setDate(currentDate);
+        setPossibleFuels([]);
+    }
 
-    const insuranceContainer = (
-        <div className="new-expense__insurances">
-            {insuranceList.map((insurance) => {
-                let customClass = "item-selector";
-                customClass += insurance.ID === insuranceType ? ' is-active' : '';
-                return (
-                    <Card
-                        customClass={customClass}
-                        key={insurance.ID}
-                        clickAction={() => {setInsurance(insurance.ID)}}
-                    >
-                        {insurance.Name}
-                    </Card>
-                )
-            })}
-        </div>
-    );
+    const submitHandler = (e) => {
+        e.preventDefault();
+        if (formIsValid) {
+            console.log('form data');
+            console.log('car', activeCar.id);
+            console.log('type', expenseType);
+            console.log('fuel', fuelType);
+            console.log('insurance', insuranceType);
+            console.log('mileage', mileage);
+            console.log('date', date);
+        }
+    }
 
     return (
         <Container customClass="new-expense">
@@ -125,10 +130,15 @@ const NewExpense = () => {
             </h1>
             <hr />
             <div className="new-expense__cars">
-                <CarList isDetailed={false} hasModal={false} clickAction={setCar} />
+                <CarList
+                    isDetailed={false}
+                    hasModal={false}
+                    clickAction={setCar}
+                    activeCar={null != activeCar ? activeCar.id : null}
+                />
             </div>
             <hr />
-            <div className="new-expense__type">
+            <div className="new-expense__type item-list">
                 {expenseList.map((expense) => {
                     let customClass = `item-selector new-expense__type-${expense.Name.toLowerCase()}`;
                     if (expense.ID === expenseType) {
@@ -147,20 +157,73 @@ const NewExpense = () => {
 
             </div>
             <hr />
-            <hr />
+            <div
+                className="new-expense__insurances item-list"
+                style={{display: expenseType === '2' ? 'flex' : 'none'}}
+            >
+                {insuranceList.map((insurance) => {
+                    let customClass = "item-selector";
+                    customClass += insurance.ID === insuranceType ? ' is-active' : '';
+                    return (
+                        <Card
+                            customClass={customClass}
+                            key={insurance.ID}
+                            clickAction={() => {setInsurance(insurance.ID)}}
+                        >
+                            {insurance.Name}
+                        </Card>
+                    )
+                })}
+            </div>
+            <div
+                className="new-expense__fuels item-list"
+                style={{display: expenseType === '1' ? 'flex' : 'none'}}
+            >
+                {possibleFuels.map((fuel) => {
+                    let customClass = "item-selector";
+                    customClass += fuel.id === fuelType ? ' is-active' : '';
+                    return (
+                        <Card
+                            customClass={customClass}
+                            key={fuel.id}
+                            clickAction={() => {setFuel(fuel.id)}}
+                        >
+                            {fuel.name}
+                        </Card>
+                    );
+                })}
+            </div>
             <div className="new-expense__inputs">
                 <input
+                    className="new-expense__inputs-mileage"
                     type="number"
                     value={mileage}
                     onChange={(e) => {
                         setMileage(e.target.value);
                     }}
                 />
-                <input
-                    type="date"
-                    value={date}
-                    onChange={(e) => {setDate(e.target.value)}}
+                <DatePicker
+                    selected={date}
+                    onChange={(date) => {setDate(date)}}
                 />
+            </div>
+            <div className="new-expense__actions">
+                <button
+                    disabled={!formIsValid}
+                    className={`exp-button exp-button__success ${formIsValid ? '' : 'disabled'} `}
+                    type='submit'
+                    onClick={submitHandler}
+                >
+                    Submit
+                </button>
+                <button
+                    type='button'
+                    className="exp-button exp-button__danger"
+                    value="Cancel"
+                    onClick={resetForm}
+                >
+                    Reset
+                </button>
             </div>
         </Container>
     );
