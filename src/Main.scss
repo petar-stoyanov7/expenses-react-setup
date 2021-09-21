@@ -6,6 +6,7 @@ $button-color: #049609;
 $background-color: #d3dde2;
 $white: #fff;
 $black: #000;
+$red: #dc3b3b;
 
 $lowest-z-index: 2;
 $low-z-index: 10;
@@ -93,7 +94,7 @@ $xxlarge: '1920px';
   }
 
   &__danger {
-    background-color: #dc3b3b;
+    background-color: $red;
 
     &.disabled {
       background-color: #cc8c8c;

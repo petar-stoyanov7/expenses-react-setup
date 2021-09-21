@@ -1,4 +1,9 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {
+    Fragment,
+    useContext,
+    useEffect,
+    useState
+} from 'react';
 
 import './NewExpense.scss';
 import Container from "../UI/Container";
@@ -6,11 +11,10 @@ import CarList from "../Cars/CarList";
 import Card from "../UI/Card";
 import AuthContext from "../../Store/auth-context";
 import axios from "axios";
-// import moment from "moment";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import LastFive from "../LastFive/LastFive";
 
-// const currentDate = moment().locale('en').format('YYYY-MM-DD');
 const currentDate = new Date();
 
 const NewExpense = () => {
@@ -19,15 +23,21 @@ const NewExpense = () => {
 
     const [activeCar, setActiveCar] = useState(null);
     const [expenseType, setExpenseType] = useState(null);
+    const [mileage, setMileage] = useState('');
+    const [date, setDate] = useState(currentDate);
     const [fuelType, setFuelType] = useState(null);
+    const [liters, setLiters] = useState('');
     const [insuranceType, setInsuranceType] = useState(null);
+    const [value, setValue] = useState('');
+    const [notes, setNotes] = useState('');
     const [expenseList, setExpenseList] = useState([]);
     const [fuelList, setFuelList] = useState([]);
     const [insuranceList, setInsuranceList] = useState([]);
     const [possibleFuels, setPossibleFuels] = useState([]);
-    const [mileage, setMileage] = useState(0);
-    const [date, setDate] = useState(currentDate);
-    const [formIsValid, setFormIsValid] = useState(false);
+    const [formIsValid, setFormIsValid] = useState({
+        isValid: false,
+        message: ''
+    });
 
 
     useEffect(() => {
@@ -51,22 +61,29 @@ const NewExpense = () => {
             });
     }, []);
 
+    /** validty */
     useEffect(() => {
-        let validity = null !== activeCar && null !== expenseType && 0 !== mileage;
+        let validity =
+            null !== activeCar &&
+            null !== expenseType &&
+            '' !== mileage &&
+            '' !== value;
         if (validity && expenseType === '1') {
-            validity = null !== fuelType;
+            validity = null !== fuelType && '' !== liters;
         }
         if (validity && expenseType === '2') {
             validity = null !== insuranceType;
         }
         setFormIsValid(validity);
-    }, [activeCar, expenseType, fuelType, insuranceType, mileage, date]);
+    }, [activeCar, expenseType, fuelType, insuranceType, mileage, date, value, liters]);
 
     const setCar = (car) => {
         setActiveCar(car);
-        setMileage(car.mileage);
+        setMileageValue(car.mileage);
+        setExpenseType(null);
         setInsuranceType(null);
         setFuelType(null);
+        setLiters('');
 
         let carFuels = [];
         fuelList.map((fuel) => {
@@ -84,6 +101,13 @@ const NewExpense = () => {
             }
         });
         setPossibleFuels(carFuels);
+        if (carFuels.length === 1) {
+            setFuel(carFuels[0].id);
+        }
+    }
+
+    const setMileageValue = (val) => {
+        setMileage(val);
     }
 
     const setExpense = (expenseId) => {
@@ -105,127 +129,194 @@ const NewExpense = () => {
         setActiveCar(null);
         setFuelType(null);
         setInsuranceType(null);
-        setMileage(0);
+        setMileageValue('');
         setDate(currentDate);
         setPossibleFuels([]);
+        setValue('');
     }
 
     const submitHandler = (e) => {
         e.preventDefault();
         if (formIsValid) {
-            console.log('form data');
-            console.log('car', activeCar.id);
-            console.log('type', expenseType);
-            console.log('fuel', fuelType);
-            console.log('insurance', insuranceType);
-            console.log('mileage', mileage);
-            console.log('date', date);
+            const expenseData = {
+                hash: ajx.hash,
+                userId: ctx.userDetails.user.id,
+                carId: activeCar.id,
+                date: new Date(date).toISOString().split('T')[0],
+                mileage: mileage,
+                expenseType: expenseType,
+                value: value,
+                fuelType: fuelType,
+                liters: liters,
+                insuranceType: insuranceType,
+                partName: null, //TODO IMPLEMENT PARTS FFS!
+                description: notes
+            }
+
+            axios.post(ajx.server+ajx.addExpense, expenseData)
+                .then((response) => {
+                    const result = response.data;
+                    if (result.success) {
+                        resetForm();
+                        //refresh last5
+                    } else {
+                        setFormIsValid(false);
+                    }
+                    console.log('response');
+                    console.log(response);
+                });
         }
     }
 
     return (
-        <Container customClass="new-expense">
-            <h1 className="new-expense__title">
-                New Expense
-            </h1>
-            <hr />
-            <div className="new-expense__cars">
-                <CarList
-                    isDetailed={false}
-                    hasModal={false}
-                    clickAction={setCar}
-                    activeCar={null != activeCar ? activeCar.id : null}
-                />
-            </div>
-            <hr />
-            <div className="new-expense__type item-list">
-                {expenseList.map((expense) => {
-                    let customClass = `item-selector new-expense__type-${expense.Name.toLowerCase()}`;
-                    if (expense.ID === expenseType) {
-                        customClass += ' is-active';
-                    }
-                    return (
-                        <Card
-                            key={expense.ID}
-                            customClass={customClass}
-                            clickAction={() => {setExpense(expense.ID)}}
-                        >
-                            {expense.Name}
-                        </Card>
-                    )
-                })}
+        <Fragment>
+            <Container customClass="new-expense">
+                <h1 className="new-expense__title">
+                    New Expense
+                </h1>
+                <div
+                    className={`new-expense__form-errors`}
+                    style={{display: formIsValid.isValid ? 'none' : 'block'}}
+                >
+                    <h3 className="new-expense__form-error">
+                        {formIsValid.message}
+                    </h3>
+                </div>
+                <hr />
+                <div className="new-expense__cars">
+                    <CarList
+                        isDetailed={false}
+                        hasModal={false}
+                        clickAction={setCar}
+                        activeCar={null != activeCar ? activeCar.id : null}
+                    />
+                </div>
+                <hr />
+                <div className="new-expense__type item-list">
+                    {expenseList.map((expense) => {
+                        let customClass = `item-selector new-expense__type-${expense.Name.toLowerCase()}`;
+                        if (expense.ID === expenseType) {
+                            customClass += ' is-active';
+                        }
+                        return (
+                            <Card
+                                key={expense.ID}
+                                customClass={customClass}
+                                clickAction={() => {setExpense(expense.ID)}}
+                            >
+                                {expense.Name}
+                            </Card>
+                        )
+                    })}
 
-            </div>
-            <hr />
-            <div
-                className="new-expense__insurances item-list"
-                style={{display: expenseType === '2' ? 'flex' : 'none'}}
-            >
-                {insuranceList.map((insurance) => {
-                    let customClass = "item-selector";
-                    customClass += insurance.ID === insuranceType ? ' is-active' : '';
-                    return (
-                        <Card
-                            customClass={customClass}
-                            key={insurance.ID}
-                            clickAction={() => {setInsurance(insurance.ID)}}
-                        >
-                            {insurance.Name}
-                        </Card>
-                    )
-                })}
-            </div>
-            <div
-                className="new-expense__fuels item-list"
-                style={{display: expenseType === '1' ? 'flex' : 'none'}}
-            >
-                {possibleFuels.map((fuel) => {
-                    let customClass = "item-selector";
-                    customClass += fuel.id === fuelType ? ' is-active' : '';
-                    return (
-                        <Card
-                            customClass={customClass}
-                            key={fuel.id}
-                            clickAction={() => {setFuel(fuel.id)}}
-                        >
-                            {fuel.name}
-                        </Card>
-                    );
-                })}
-            </div>
-            <div className="new-expense__inputs">
-                <input
-                    className="new-expense__inputs-mileage"
-                    type="number"
-                    value={mileage}
-                    onChange={(e) => {
-                        setMileage(e.target.value);
-                    }}
-                />
-                <DatePicker
-                    selected={date}
-                    onChange={(date) => {setDate(date)}}
-                />
-            </div>
-            <div className="new-expense__actions">
-                <button
-                    disabled={!formIsValid}
-                    className={`exp-button exp-button__success ${formIsValid ? '' : 'disabled'} `}
-                    type='submit'
-                    onClick={submitHandler}
+                </div>
+                <hr />
+                <div
+                    className="new-expense__insurances item-list"
+                    style={{display: expenseType === '2' ? 'flex' : 'none'}}
                 >
-                    Submit
-                </button>
-                <button
-                    type='button'
-                    className="exp-button exp-button__danger"
-                    value="Cancel"
-                    onClick={resetForm}
+                    {insuranceList.map((insurance) => {
+                        let customClass = "item-selector";
+                        customClass += insurance.ID === insuranceType ? ' is-active' : '';
+                        return (
+                            <Card
+                                customClass={customClass}
+                                key={insurance.ID}
+                                clickAction={() => {setInsurance(insurance.ID)}}
+                            >
+                                {insurance.Name}
+                            </Card>
+                        )
+                    })}
+                </div>
+                <div
+                    className="new-expense__fuels item-list"
+                    style={{display: expenseType === '1' && null != activeCar ? 'flex' : 'none'}}
                 >
-                    Reset
-                </button>
-            </div>
-        </Container>
+                    <div className="new-expense__fuels-liters">
+                        <input
+                            className="new-expense__inputs-liters new-expense__input"
+                            type="number"
+                            placeholder="Liters"
+                            value={liters}
+                            onChange={(e) => {
+                                setLiters(e.target.value);
+                            }}
+                        />
+                    </div>
+                    <div className="new-expense__fuels-list">
+                        {possibleFuels.map((fuel) => {
+                            let customClass = "item-selector";
+                            customClass += fuel.id === fuelType ? ' is-active' : '';
+                            return (
+                                <Card
+                                    customClass={customClass}
+                                    key={fuel.id}
+                                    clickAction={() => {setFuel(fuel.id)}}
+                                >
+                                    {fuel.name}
+                                </Card>
+                            );
+                        })}
+                    </div>
+
+                </div>
+                <div className="new-expense__inputs">
+                    <input
+                        className="new-expense__inputs-mileage new-expense__input"
+                        type="number"
+                        value={mileage}
+                        placeholder="Mileage"
+                        onChange={(e) => {
+                            setMileageValue(e.target.value);
+                        }}
+                    />
+                    <DatePicker
+                        className="new-expense__input new-expense__inputs-date"
+                        selected={date}
+                        onChange={(date) => {setDate(date)}}
+                    />
+                    <input
+                        className="new-expense__inputs-value new-expense__input"
+                        type="number"
+                        value={value}
+                        placeholder="Value"
+                        onChange={(e) => {
+                            setValue(e.target.value);
+                        }}
+                    />
+                    <textarea
+                        placeholder="Additional info"
+                        className="new-expense__input new-expense__inputs-notes"
+                        onChange={(e) => {setNotes(e.target.value)}}
+                        value={notes}
+                    />
+                </div>
+                <div className="new-expense__actions">
+                    <button
+                        disabled={!formIsValid}
+                        className={`exp-button exp-button__success ${formIsValid ? '' : 'disabled'} `}
+                        type='submit'
+                        onClick={submitHandler}
+                    >
+                        Submit
+                    </button>
+                    <button
+                        type='button'
+                        className="exp-button exp-button__danger"
+                        value="Cancel"
+                        onClick={resetForm}
+                    >
+                        Reset
+                    </button>
+                </div>
+
+            </Container>
+            <Container>
+                <LastFive type="user" userId={ctx.userDetails.user.id}/>
+            </Container>
+        </Fragment>
+
     );
 }
 

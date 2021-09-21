@@ -25,7 +25,7 @@ const ExpenseTable = (props) => {
         expenses = props.expenses.map((expense) => {
             return (
                 <tr
-                    key={expense.id}
+                    key={expense.id+expense.date}
                     onClick={null == props.clickAction ? undefined : () => {
                         props.clickAction(expense.id);
                     }}

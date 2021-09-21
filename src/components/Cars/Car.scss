@@ -8,6 +8,10 @@
   box-sizing: border-box;
   cursor: pointer;
 
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+
   &__container {
     display: flex;
     flex-direction: row;
@@ -27,6 +31,10 @@
     display: block;
     min-width: 50%;
     margin-bottom: 5px;
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
 
 
     @media (min-width: $medium) {

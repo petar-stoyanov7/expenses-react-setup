@@ -9,5 +9,6 @@
   "getLastFive": "/statistics/get-last-five",
   "register": "/account/register",
   "getExpenses": "/expense/get-expenses",
-  "getInsurances": "/expense/get-insurances"
+  "getInsurances": "/expense/get-insurances",
+  "addExpense": "/expense/new-expense"
 }
