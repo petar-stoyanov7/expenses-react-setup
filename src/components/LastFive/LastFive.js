@@ -2,7 +2,8 @@ import React, {
     useContext,
     useEffect,
     useState,
-    Fragment
+    Fragment,
+    Component
 } from 'react';
 
 import './LastFive.scss';
@@ -49,38 +50,42 @@ const dummyData = [
 const LastFive = (props) => {
     const ctx = useContext(AuthContext);
     const [lastFive, setLastFive] = useState(dummyData);
+    const refresh = props.refresh;
 
     useEffect(() => {
         const ajaxCfg = ctx.ajaxConfig;
-        let data = {
-            hash: ctx.ajaxConfig.hash
+        if (refresh) {
+            let data = {
+                hash: ctx.ajaxConfig.hash
+            }
+            switch(props.type) {
+                case 'car':
+                    data['carId'] = props.carId;
+                    break;
+                case 'user':
+                default:
+                    data['userId'] = ctx.userDetails.user.id;
+                    break;
+            }
+            if (undefined !== data['userId'] || undefined !== data['carId']) {
+                axios.post(`${ajaxCfg.server}${ajaxCfg.getLastFive}`, data)
+                    .then((response) => {
+                        console.log('response');
+                        const result = response.data
+                        if (result.success) {
+                            const formattedData = parseRawData(result.data);
+                            setLastFive(formattedData);
+                        } else {
+                            setLastFive(dummyData);
+                        }
+                    });
+            } else {
+                setLastFive(dummyData);
+            }
+            props.clearRefresh(false);
         }
-        switch(props.type) {
-            case 'car':
-                data['carId'] = props.carId;
-                break;
-            case 'user':
-                data['userId'] = props.userId;
-                break;
-            default:
-                data['userId'] = ctx.userDetails.user.id;
-                break;
-        }
-        if (undefined !== data['userId'] || undefined !== data['carId']) {
-            axios.post(`${ajaxCfg.server}${ajaxCfg.getLastFive}`, data)
-                .then((response) => {
-                    const result = response.data
-                    if (result.success) {
-                        const formattedData = parseRawData(result.data);
-                        setLastFive(formattedData);
-                    } else {
-                        setLastFive(dummyData);
-                    }
-                });
-        } else {
-            setLastFive(dummyData);
-        }
-    }, [ctx.userDetails, ctx.ajaxConfig]);
+    }, [ctx.userDetails, refresh]);
+    console.log('render');
 
     return (
         <Fragment>

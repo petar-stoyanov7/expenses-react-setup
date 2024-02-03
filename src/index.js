@@ -5,16 +5,19 @@ import './index.scss';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {AuthContextProvider} from "./Store/auth-context";
+import {BrowserRouter as Router} from "react-router-dom";
 
 
 let rootElement = document.getElementById('root');
 
 ReactDOM.render(
-    <CookiesProvider>
-        <AuthContextProvider>
-            <App />
-        </AuthContextProvider>
-    </CookiesProvider>,
+    <Router>
+        <CookiesProvider>
+            <AuthContextProvider>
+                <App />
+            </AuthContextProvider>
+        </CookiesProvider>
+    </Router>,
     rootElement
 );
 

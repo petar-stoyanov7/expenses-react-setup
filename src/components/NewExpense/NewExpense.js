@@ -38,6 +38,7 @@ const NewExpense = () => {
         isValid: false,
         message: ''
     });
+    const [isFormSubmit, setIsFormSubmit] = useState(true);
 
 
     useEffect(() => {
@@ -125,6 +126,7 @@ const NewExpense = () => {
     }
 
     const resetForm = () => {
+        console.log('form reset');
         setExpense(null);
         setActiveCar(null);
         setFuelType(null);
@@ -133,6 +135,7 @@ const NewExpense = () => {
         setDate(currentDate);
         setPossibleFuels([]);
         setValue('');
+        setIsFormSubmit(true);
     }
 
     const submitHandler = (e) => {
@@ -160,7 +163,8 @@ const NewExpense = () => {
                         resetForm();
                         //refresh last5
                     } else {
-                        setFormIsValid(false);
+                        setFormIsValid(false); //TODO FIX
+
                     }
                     console.log('response');
                     console.log(response);
@@ -313,7 +317,11 @@ const NewExpense = () => {
 
             </Container>
             <Container>
-                <LastFive type="user" userId={ctx.userDetails.user.id}/>
+                <LastFive
+                    type="user"
+                    refresh={isFormSubmit}
+                    clearRefresh={setIsFormSubmit}
+                />
             </Container>
         </Fragment>
 

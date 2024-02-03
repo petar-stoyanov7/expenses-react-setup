@@ -5,6 +5,8 @@ import Register from "../components/Register/Register";
 import ajaxConfig from "../cfg/ajax.json";
 import axios from "axios";
 
+/** TODO check redux, recoil */
+
 const AuthContext = createContext({
     isLoggedIn: false,
     ajaxConfig: {},

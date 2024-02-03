@@ -5,6 +5,7 @@ import Footer from "./components/Footer/Footer";
 import HomePage from "./components/HomePage/HomePage";
 import NewExpense from "./components/NewExpense/NewExpense";
 import AuthContext from "./Store/auth-context";
+import {Route, Switch} from 'react-router-dom'
 
 function App() {
     const ctx = useContext(AuthContext);
@@ -24,14 +25,24 @@ function App() {
     }, [ctx.userDetails.isLogged]);
 
 
+
+
     return (
+
         <Fragment>
             <Header
                 setHomepage={setHomepage}
                 setNewExpense={setNewExpense}
             />
             <main className="main-content">
-                {activeElement}
+                <Switch>
+                    <Route path="/new">
+                        <NewExpense />
+                    </Route>
+                    <Route path="/">
+                        <HomePage />
+                    </Route>
+                </Switch>
             </main>
             <Footer/>
         </Fragment>

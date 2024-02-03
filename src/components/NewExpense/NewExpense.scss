@@ -128,7 +128,7 @@
 
     @media (min-width: $medium) {
       font-size: 18px;
-      &:first-of-type {
+      &:first-of-type:not(textarea) {
         margin-right: 15px;
       }
     }
